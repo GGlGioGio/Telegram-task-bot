@@ -1,0 +1,23 @@
+services:
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: taskbot_db
+      POSTGRES_USER: taskbot_user
+      POSTGRES_PASSWORD: your_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  bot:
+    build: .
+    environment:
+      - DATABASE_URL=postgresql://taskbot_user:your_password@db:5432/taskbot_db
+    depends_on:
+      - db
+    ports:
+      - "5000:5000"
+
+volumes:
+  postgres_data:
