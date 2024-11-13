@@ -1,45 +1,29 @@
-name: CI Pipeline
+name: Python CI
 
 on:
   push:
-    branches:
-      - main  # Рабочая ветка, куда будет происходить пуш
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   build:
-    runs-on: ubuntu-latest  # Используем Ubuntu для запуска CI
+    runs-on: ubuntu-latest  # или другой подходящий runner
 
     steps:
-      # Шаг 1: Получаем код из репозитория
-      - name: Checkout code
-        uses: actions/checkout@v2
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
-      # Шаг 2: Настройка Python 3.11
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.11'  # Указываем вашу версию Python
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.11  # Версия Python, которую вы используете
 
-      # Шаг 3: Обновляем pip до последней версии
-      - name: Upgrade pip
-        run: |
-          python -m pip install --upgrade pip
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt  # Установка зависимостей из requirements.txt
 
-      # Шаг 4: Кэширование зависимостей pip
-      - name: Cache pip dependencies
-        uses: actions/cache@v2
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
-
-      # Шаг 5: Установка зависимостей из requirements.txt
-      - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
-
-      # Шаг 6: Запуск тестов (если они настроены, например, с использованием pytest)
-      - name: Run tests
-        run: |
-          pytest  # Если у вас нет тестов, этот шаг можно пропустить или изменить
+    - name: Run tests
+      run: |
+        pytest  # Запуск тестов с помощью pytest
