@@ -1,23 +1,23 @@
+version: '3'
 services:
   db:
     image: postgres:13
     environment:
-      POSTGRES_DB: taskbot_db
-      POSTGRES_USER: taskbot_user
-      POSTGRES_PASSWORD: your_password
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: telegram_task_db
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-
+      - db_data:/var/lib/postgresql/data
   bot:
     build: .
-    environment:
-      - DATABASE_URL=postgresql://taskbot_user:your_password@db:5432/taskbot_db
     depends_on:
       - db
     ports:
       - "5000:5000"
+    environment:
+      DATABASE_URL: "postgresql://user:password@db:5432/telegram_task_db"
 
 volumes:
-  postgres_data:
+  db_data:
